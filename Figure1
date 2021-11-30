@@ -1,0 +1,125 @@
+library(data.table)
+library(ggplot2)
+library(scales)
+library(cowplot)
+library(ggforce)
+library(ggpubr)
+library(dplyr)
+
+#Figure 1B
+
+# Load data (I transposed this in Excel so it is columns rather than rows)
+data.dt <- fread("~/OneDrive - Nexus365/E-cad phenotype.csv")
+# Assign names to Oligos
+data.dt[Oligo == 0, oligo_name := "NT"]
+data.dt[Oligo == 5, oligo_name := "LZ#5"]
+data.dt[Oligo == 6, oligo_name := "LZ#6"]
+# Convert to ordered factor in correct order for plot
+data.dt$oligo_name <- factor(data.dt$oligo_name, levels = c("NT", "LZ#5", "LZ#6"))
+# Convert replicate from number to factor to group for colour
+data.dt[, Replicate := as.factor(Exp)]
+
+for(i in c(0.25, 0.5, 1, 2, 3)) {
+  
+  message(i)
+  
+  # Select data and specify what goes on x and y axis
+  p <- ggplot(data = data.dt, aes(x = oligo_name, y = Normalised)) +
+    # Plot dots as a violin-like plot, assigning the colours and shapes by replicate, but grouping them by oligo (not replicate within each oligo)
+    geom_sina(aes(fill = Replicate, shape = Replicate, group = oligo_name), colour = "black", adjust = i, size = 2, stroke = 0.1, maxwidth = 0.5) +
+    # Plot boxplot, make transparent, reduce width to 0.5 for aesthetics, do not show outliers (as plotting all data anyway)
+    geom_boxplot(fill = NA, width = 0.5, outlier.shape = NA) +
+    # Wilcox text between selected comparisons
+    stat_compare_means(method = "wilcox.test", comparisons = list(c("NT", "LZ#5"), c("NT", "LZ#6"))) +
+    # Assign shapes manually
+    scale_shape_manual(values = c(21, 22, 24, 25)) +
+    # Assign colours manually
+    scale_fill_manual(values = c("#F59221", "#804097", "#29AAE2", "#8BC540")) +
+    scale_size(range = c(1,6), guide = "none") +
+    # Labels
+    labs(title = paste0("Adjust = ", i),
+         x = "Oligo",
+         y = "Normalised E-cad levels") +
+    # Select theme for axis labels, ticks, background, fonts etc.
+    theme_cowplot()
+  # Save as an A5 PDF
+  ggsave(p, filename = paste0("figure1B E-cad-.adjust_", i, ".pdf"), width = 5/1.25, height = 4)
+  
+  #Figure 1D
+  
+  # Load data (I transposed this in Excel so it is columns rather than rows)
+data.dt <- fread("~/OneDrive - Nexus365/E-cad phenotype.csv")
+# Assign names to Oligos
+data.dt[Oligo == 0, oligo_name := "NT"]
+data.dt[Oligo == 5, oligo_name := "LZ#5"]
+data.dt[Oligo == 6, oligo_name := "LZ#6"]
+# Convert to ordered factor in correct order for plot
+data.dt$oligo_name <- factor(data.dt$oligo_name, levels = c("NT", "LZ#5", "LZ#6"))
+# Convert replicate from number to factor to group for colour
+data.dt[, Replicate := as.factor(Exp)]
+
+for(i in c(0.25, 0.5, 1, 2, 3)) {
+  
+  message(i)
+  
+  # Select data and specify what goes on x and y axis
+  p <- ggplot(data = data.dt, aes(x = oligo_name, y = Normalised)) +
+    # Plot dots as a violin-like plot, assigning the colours and shapes by replicate, but grouping them by oligo (not replicate within each oligo)
+    geom_sina(aes(fill = Replicate, shape = Replicate, group = oligo_name), colour = "black", adjust = i, size = 2, stroke = 0.1, maxwidth = 0.5) +
+    # Plot boxplot, make transparent, reduce width to 0.5 for aesthetics, do not show outliers (as plotting all data anyway)
+    geom_boxplot(fill = NA, width = 0.5, outlier.shape = NA) +
+    # Wilcox text between selected comparisons
+    stat_compare_means(method = "wilcox.test", comparisons = list(c("NT", "LZ#5"), c("NT", "LZ#6"))) +
+    # Assign shapes manually
+    scale_shape_manual(values = c(21, 22, 24, 25)) +
+    # Assign colours manually
+    scale_fill_manual(values = c("#F59221", "#804097", "#29AAE2", "#8BC540")) +
+    scale_size(range = c(1,6), guide = "none") +
+    # Labels
+    labs(title = paste0("Adjust = ", i),
+         x = "Oligo",
+         y = "Normalised E-cad levels") +
+    # Select theme for axis labels, ticks, background, fonts etc.
+    theme_cowplot()
+  # Save as an A5 PDF
+  ggsave(p, filename = paste0("figure1B E-cad-.adjust_", i, ".pdf"), width = 5/1.25, height = 4)
+  
+  #Figure 1G
+  
+  # Load data (I transposed this in Excel so it is columns rather than rows)
+data.dt <- fread("~/OneDrive - Nexus365/Dispase assay.csv")
+# Assign names to Oligos
+data.dt[Oligo == 0, oligo_name := "NT"]
+data.dt[Oligo == 1, oligo_name := "LZ#6"]
+# Convert to ordered factor in correct order for plot
+data.dt$oligo_name <- factor(data.dt$oligo_name, levels = c("NT", "LZ#6"))
+# Convert replicate from number to factor to group for colour
+data.dt[, Replicate := as.factor(Exp)]
+
+for(i in c(0.25, 0.5, 1, 2, 3)) {
+  
+  message(i)
+  
+# Select data and specify what goes on x and y axis
+p <- ggplot(data = data.dt, aes(x = oligo_name, y = Normalised)) +
+  # Plot dots as a violin-like plot, assigning the colours and shapes by replicate, but grouping them by oligo (not replicate within each oligo)
+  geom_sina(aes(fill = Replicate, shape = Replicate, colour = Replicate, group = oligo_name), adjust = i, maxwidth = 0.5, size = 2, stroke = 0.1) +
+  # Plot boxplot, make transparent, reduce width to 0.5 for aesthetics, do not show outliers (as plotting all data anyway)
+  geom_boxplot(fill = NA, width = 0.5, outlier.shape = NA) +
+  # Wilcox text between selected comparisons
+  stat_compare_means(method = "wilcox.test", comparisons = list(c("NT", "LZ#6"))) +
+  # Assign shapes manually
+  scale_shape_manual(values = c(21, 22, 24, 25, 23, 0)) +
+  # Assign colours manually
+  scale_colour_manual(values = c("#000000", "#000000","#000000", "#000000", "#000000", "#EF4237")) +
+  scale_fill_manual(values = c("#F59221", "#804097", "#29AAE2", "#8BC540", "#E80E8A", NA)) +
+  # Labels
+  labs(title = paste0("Adjust = ", i),
+       x = "Oligo",
+       y = "Disrupted no of pieces") +
+  # Select theme for axis labels, ticks, background, fonts etc.
+  theme_cowplot()
+# Save as an A5 PDF
+ggsave(p, filename = paste0("figure1G-width-test.adjust_", i, ".pdf"), width = 5/1.25, height = 4)
+
+}
